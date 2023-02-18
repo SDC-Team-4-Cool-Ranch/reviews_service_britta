@@ -2,9 +2,9 @@
   "name": "product_service",
   "version": "1.0.0",
   "description": "Product microservice",
-  "main": "server.js",
+  "main": "server/server.js",
   "scripts": {
-    "server-dev": "npx nodemon --watch src src/server.js",
+    "server-dev": "npx nodemon --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
