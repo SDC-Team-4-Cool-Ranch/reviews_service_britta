@@ -25,9 +25,9 @@ const csvStringifier = createCsvStringifier({
   }, {
     id: 'reviewer_email', title: 'reviewer_email'
   }, {
-    id: 'url', title: 'response'
+    id: 'response', title: 'response'
   }, {
-    id: 'url', title: 'helpfulness'
+    id: 'helpfulness', title: 'helpfulness'
   }]
 });
 

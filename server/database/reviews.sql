@@ -1,6 +1,6 @@
 -- DROP DATABASE IF EXISTS reviews_bm;
--- CREATE DATABASE reviews_bm;
--- \c reviews_bm; /* connect database */
+CREATE DATABASE reviews_bm;
+\c reviews_bm; /* connect database */
 
 CREATE TABLE IF NOT EXISTS reviews (
   id SERIAL PRIMARY KEY,

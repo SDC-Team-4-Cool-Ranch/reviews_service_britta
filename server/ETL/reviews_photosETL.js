@@ -13,7 +13,7 @@ const csvStringifier = createCsvStringifier({
   }]
 });
 
-let readStream = fs.createReadStream("server/data/reviews_photos.csv");
+let readStream = fs.createReadStream("server/data/reviews_photos_trunc.csv");
 let writeStream = fs.createWriteStream("server/data/cleanReviewsPhotos.csv");
 
 class CSVCleaner extends Transform {
@@ -37,7 +37,7 @@ class CSVCleaner extends Transform {
     chunk.review_id = onlyReviewIdNumbers;
 
     //use csvStringifier to turn chunk into csv string
-    chunk = csvStringifier.stringfyRecords([chunk]);
+    chunk = csvStringifier.stringifyRecords([chunk]);
 
     let commaCount = 0;
     let quoteInsertIndex;
@@ -53,7 +53,7 @@ class CSVCleaner extends Transform {
     let text = chunk.slice(0, quoteInsertIndex) + '"' + chunk.slice(quoteInsertIndex).trim();
     let result = text.concat(`"\n`);
 
-    this.push(result);
+    this.push(chunk);
 
     next();
   }
