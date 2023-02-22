@@ -1,5 +1,18 @@
 const model = require('./model.js')
 const express = require('express')
+// import Redis from 'ioredis';
+// const redis = new Redis({
+//   'port': 6379,
+//   'host': 'localhost',
+// })
+
+// let cacheEntry = await redis.get(`'product':${req.query.product_id}`)
+// if (cacheEntry) {
+//   cacheEntry = JSON.parse(cacheEntry);
+//   return {..cacheEntry, 'source':'cache'}
+// }
+// return {...dbResponse.data, 'source': 'db'}
+
 
 module.exports = {
   getAllReviews: (req, res) => {

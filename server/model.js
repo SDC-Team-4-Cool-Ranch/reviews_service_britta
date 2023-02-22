@@ -1,21 +1,34 @@
 const { Pool, Client } = require('pg');
 const { HOST, PORT, USER, DB } = process.env;
-const client = new Client({
+
+const pool = new Pool({
   host: HOST,
   port: 5432,
   user: USER,
   database: DB,
-});
+})
+
+// pool.query('SELECT NOW()', (err, res) => {
+//   console.log(err, res)
+//   pool.end()
+// })
+
+// const client = new Client({
+//   host: HOST,
+//   port: 5432,
+//   user: USER,
+//   database: DB,
+// });
 
 // connect to database
-client
+pool
   .connect()
   .then(() => console.log('connected'))
   .catch((err) => console.error('connection error', err.stack))
 
 module.exports = {
   getAll: (product_id, count, page) => {
-    return client.query(`SELECT json_build_object(
+    return pool.query(`SELECT json_build_object(
       'product', ${product_id},
       'page', ${page},
       'count', ${count},
@@ -59,11 +72,11 @@ module.exports = {
   },
 
   putHelpful: (id) => {
-    return client.query(`UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = ${id}`)
+    return pool.query(`UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = ${id}`)
   },
 
   putReported: (id) => {
-    return client.query(`UPDATE reviews SET reported = true WHERE id = ${id}`)
+    return pool.query(`UPDATE reviews SET reported = true WHERE id = ${id}`)
   }
 
 
