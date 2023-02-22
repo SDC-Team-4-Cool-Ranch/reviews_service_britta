@@ -11,8 +11,9 @@ module.exports = {
   },
 
   postReview: (req, res) => {
-    // console.log(req)
-    model.postOne(req.body)
+    console.log('query:', req.query)
+    console.log('body: ', req.body)
+    model.postOne(req.query.product_id, req.body)
       .then(() => {
         console.log('review posted');
         res.sendStatus(200);

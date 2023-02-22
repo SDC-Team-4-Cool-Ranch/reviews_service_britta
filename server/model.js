@@ -14,9 +14,9 @@ client
   .catch((err) => console.error('connection error', err.stack))
 
 module.exports = {
-  getAll: (id, count, page) => {
+  getAll: (product_id, count, page) => {
     return client.query(`SELECT json_build_object(
-      'product', ${id},
+      'product', ${product_id},
       'page', ${page},
       'count', ${count},
       'results', (SELECT json_agg(row_to_json(reviews_alias))
@@ -29,15 +29,33 @@ module.exports = {
         ))) AS photos
       FROM reviews r
       LEFT JOIN reviews_photos p ON r.id = p.review_id
-      WHERE product_id = ${id} AND reported = false
+      WHERE product_id = ${product_id} AND reported = false
       GROUP BY r.id
       LIMIT ${count} OFFSET ${page}) reviews_alias))`)
   },
 
-  postOne: (id) => {
-    const { rating, summary, body, recommended, reviewer_name, reviewer_email } = req.body;
-    let queryString = `INSERT INTO reviews (product_id,rating,date,summary,body,recommend,reviewer_name,reviewer_email) VALUES (${product_id}, ${rating}, ${Date.now()}, ${summary}, ${body}, ${recommended}, ${reviewer_name}, ${reviewer_email})`
-    return client.query(queryString);
+  postOne: (product_id, req_body) => {
+    const { rating, summary, body, recommended, reviewer_name,
+      reviewer_email, photos, characteristics } = req_body;
+
+    let queries = [];
+
+    queries.push(client.query(`INSERT INTO reviews (product_id,rating,date,summary,body,
+      recommend,reviewer_name,reviewer_email) VALUES (${product_id}, ${rating},
+      ${Date.now()}, ${summary}, ${body}, ${recommended}, ${reviewer_name}, ${reviewer_email})`))
+
+    photos.map((url) => {
+      queries.push(client.query(`INSERT INTO reviews_photos (review_id, url)
+      VALUES ((SELECT MAX(id) from reviews), '${url}')`))
+    })
+
+    let chars = Object.entries(characteristics);
+    chars.map(char => {
+      queries.push(client.query(`INSERT INTO reviews_characteristics (characteristic_id,review_id,value)
+      VALUES (${char[0]}, (SELECT MAX(id) from reviews), ${char[1]})`))
+    })
+
+    return Promise.all(queries);
   },
 
   putHelpful: (id) => {
