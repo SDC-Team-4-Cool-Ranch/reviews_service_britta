@@ -1,11 +1,12 @@
 const { Pool, Client } = require('pg');
-const { HOST, PORT, USER, DB } = process.env;
+const { HOST, DBPORT, USER, DB, PASSWORD } = process.env;
 
 const pool = new Pool({
   host: HOST,
-  port: 5432,
+  port: DBPORT,
   user: USER,
   database: DB,
+  password: PASSWORD,
 })
 
 // pool.query('SELECT NOW()', (err, res) => {
