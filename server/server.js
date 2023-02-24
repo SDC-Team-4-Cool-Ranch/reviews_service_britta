@@ -11,6 +11,10 @@ app.use(morgan('dev'));
 app.use('/db', router);
 // app.use(express.static('../client/dist'));
 
+app.get(`/${process.env.LOADER_IO}`, (req, res) => {
+  res.send(process.env.LOADER_IO)
+})
+
 
 app.listen(process.env.PORT);
 console.log(`Listening at http://localhost:${process.env.PORT}`);

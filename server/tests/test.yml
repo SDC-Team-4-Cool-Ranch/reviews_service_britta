@@ -1,0 +1,18 @@
+config:
+  target: 'http://3.216.132.192:3000'
+  phases:
+    - duration: 10
+      arrivalRate: 50
+      name: Warm up
+    - duration: 30
+      arrivalRate: 50
+      rampTo: 500
+      name: Ramp up load
+    - duration: 30
+      arrivalRate: 500
+      name: Sustained load
+  scenarios:
+    - name: 'Get reviews for current product'
+      flow:
+        - get:
+            url: '/db/reviews?product_id={{$randomNumber(900000,1000000)}}'
