@@ -1,25 +1,32 @@
 const model = require('./model.js')
 const express = require('express')
-// import Redis from 'ioredis';
-// const redis = new Redis({
-//   'port': 6379,
-//   'host': 'localhost',
-// })
+const Redis = require('ioredis');
+const { promisify } = require('util');
+const { HOST, RDPORT } = process.env;
 
-// let cacheEntry = await redis.get(`'product':${req.query.product_id}`)
-// if (cacheEntry) {
-//   cacheEntry = JSON.parse(cacheEntry);
-//   return {..cacheEntry, 'source':'cache'}
-// }
-// return {...dbResponse.data, 'source': 'db'}
+const redis = new Redis({
+  host: HOST,
+  port: RDPORT,
+})
 
 
 module.exports = {
-  getAllReviews: (req, res) => {
+  getAllReviews: async (req, res) => {
     let page = req.query.page || 0;
     let count = req.query.count || 5;
+    const getEntry = promisify(redis.get).bind(redis);
+    let cacheEntry = await getEntry(`'product':${req.query.product_id}`)
+    if (cacheEntry) {
+      console.log('accessing cache')
+      cacheEntry = JSON.parse(cacheEntry);
+      return res.status(200).send(cacheEntry);
+    }
     model.getAll(req.query.product_id, count, page)
-      .then((data) => res.status(200).send(data.rows[0].json_build_object))
+      .then(async (data) => {
+        await redis.setex(`'product':${req.query.product_id}`,60, JSON.stringify(data.rows[0].json_build_object))
+        res.status(200).send(data.rows[0].json_build_object)
+      })
+
       .catch((err) => console.log(err))
   },
 

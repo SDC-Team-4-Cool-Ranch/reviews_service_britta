@@ -11,8 +11,8 @@ config:
     - duration: 30
       arrivalRate: 500
       name: Sustained load
-  scenarios:
-    - name: 'Get reviews for current product'
-      flow:
-        - get:
-            url: '/db/reviews?product_id={{$randomNumber(900000,1000000)}}'
+scenarios:
+  - name: 'Get reviews for current product'
+    flow:
+      - get:
+          url: '/db/reviews?product_id={{$randomNumber(900000,1000000)}}'
